@@ -25,7 +25,7 @@ my_password = config.password
 linkedin_link = config.linkedin_link
 
 # %%
-# need to add check about internet connection
+# need to add check about internet connection.
 
 # %%
 start_time = datetime.now() 
@@ -84,18 +84,19 @@ except:
     print('No keywords or problems with keywords')
     print('-----------------\n')
 
-pattern = re.compile(r'\b\b\d.\d%')
+pattern = re.compile(r'\b\b\d{1,2}.\d{1,2}%')
 companies_list = []
 job_titles_list = []
 
 try:
     score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')
     for i in score:
-        print(i.text)
         if pattern.findall(i.text):
             job_titles_list.append(i.text)
         else:
             companies_list.append(i.text)
+    print(job_titles_list)
+    print(companies_list)
     print('-----------------\n')
 except:
     print('No companies or problems with companies')
@@ -164,7 +165,7 @@ driver.quit()
 
 # %%
 # df = pd.read_csv('linkedin_parsing_results.csv')
-# df.head()
+# df.tail()
 
 
 # %%
