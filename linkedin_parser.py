@@ -1,4 +1,5 @@
 # %%
+# from selenium_stealth import stealth
 import time
 import undetected_chromedriver as uc
 import requests
@@ -10,31 +11,40 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
-import config
-
 from csv import writer
 import pandas as pd
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import re
+from dateutil.parser import parse
+
+# %%
+import config
+my_email = config.email
+my_password = config.password
+linkedin_link = config.linkedin_link
+
+# %%
+# need to add check about internet connection
 
 # %%
 start_time = datetime.now() 
 print('Start time: ', start_time)
 
 # %%
-driver = uc.Chrome(use_subprocess=True, headless = True)
+driver = uc.Chrome(use_subprocess=True)#, headless = True)
 # detection test
 # driver.get('https://nowsecure.nl')
 driver.get(url = 'https://www.linkedin.com/login')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.ID, "username")))
-driver.find_element(By.ID, "username").send_keys('andrey.shivalin@phystech.edu')
-driver.find_element(By.ID, "password").send_keys('andrey9012')
+driver.find_element(By.ID, "username").send_keys(my_email)
+driver.find_element(By.ID, "password").send_keys(my_password)
 driver.find_element(By.CLASS_NAME, "login__form_action_container ").click()
 # work long time
 
 
 # %%
-driver.get(url = 'https://www.linkedin.com/in/andrey-shivalin/')
+driver.get(url = f'https://www.linkedin.com/in/{linkedin_link}/')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'pvs-list__item--three-column')))
 
 # profile page base numbers
@@ -48,28 +58,48 @@ print(searchs, 'search appearances, for 7 days, which days(?)')
 
 # %%
 driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
-WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon__cta-list-item')))
+WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
 
-keywords = []
-score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon__cta-list-item')
-for i in score:
-    print(i.text)
-    keywords.append(i.text)
-print('-----------------\n')
+# search period parsing
+try:
+    search_period = driver.find_element(By.CLASS_NAME, 'member-analytics-addon-analytics-view__subtitle').text
+    dt1 = parse(search_period.split('between ')[1].split(' - ')[0])
+    dt2 = parse(search_period.split('between ')[1].split(' - ')[1])
+    if dt1 > dt2:
+        dt1 = dt1 - relativedelta(years = 1)
+    print('Search period: ', dt1, ' - ', dt2)
+    print('-----------------\n')
+except:
+    print('No search period or problems with search period')
+    print('-----------------\n')
+
+try: 
+    keywords = []
+    score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon__cta-list-item')
+    for i in score:
+        print(i.text)
+        keywords.append(i.text)
+    print('-----------------\n')
+except:
+    print('No keywords or problems with keywords')
+    print('-----------------\n')
 
 pattern = re.compile(r'\b\b\d.\d%')
 companies_list = []
 job_titles_list = []
 
-score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')
-for i in score:
-    print(i.text)
-    if pattern.findall(i.text):
-        job_titles_list.append(i.text)
-    else:
-        companies_list.append(i.text)
-print('-----------------\n')
-
+try:
+    score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')
+    for i in score:
+        print(i.text)
+        if pattern.findall(i.text):
+            job_titles_list.append(i.text)
+        else:
+            companies_list.append(i.text)
+    print('-----------------\n')
+except:
+    print('No companies or problems with companies')
+    print('-----------------\n')
 
 # %%
 driver.get(url = 'https://www.linkedin.com/sales/ssi')
@@ -120,7 +150,7 @@ print(script_time)
 print('script execution time ',datetime.now() - start_time)
 
 # %%
-List = [script_time, views, impressions, searchs, index, brand, find_people, engage, relationships, people_industry, people_network, industry_ssi_rank, network_ssi_rank, keywords,companies_list, job_titles_list]
+List = [script_time, views, impressions, searchs, index, brand, find_people, engage, relationships, people_industry, people_network, industry_ssi_rank, network_ssi_rank, keywords,companies_list, job_titles_list, dt1, dt2]
 
 # %%
 with open('linkedin_parsing_results.csv', 'a') as f_object:
