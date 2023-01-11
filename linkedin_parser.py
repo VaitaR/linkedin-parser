@@ -60,6 +60,7 @@ print(searchs, 'search appearances, for 7 days, which days(?)')
 driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
 
+
 # search period parsing
 try:
     search_period = driver.find_element(By.CLASS_NAME, 'member-analytics-addon-analytics-view__subtitle').text
@@ -89,6 +90,7 @@ companies_list = []
 job_titles_list = []
 
 try:
+    WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
     score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')
     for i in score:
         if pattern.findall(i.text):
