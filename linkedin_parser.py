@@ -32,7 +32,7 @@ start_time = datetime.now()
 print('Start time: ', start_time)
 
 # %%
-driver = uc.Chrome(use_subprocess=True)#, headless = True)
+driver = uc.Chrome(use_subprocess=True, headless = True)
 # detection test
 # driver.get('https://nowsecure.nl')
 driver.get(url = 'https://www.linkedin.com/login')
@@ -166,8 +166,8 @@ with open('linkedin_parsing_results.csv', 'a') as f_object:
 driver.quit()
 
 # %%
-# df = pd.read_csv('linkedin_parsing_results.csv')
-# df.tail()
+df = pd.read_csv('linkedin_parsing_results.csv')
+df.tail()
 
 
 # %%
