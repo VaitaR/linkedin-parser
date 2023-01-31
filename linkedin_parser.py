@@ -57,8 +57,8 @@ searchs = score[2].text.split(' ')[0]
 print(searchs, 'search appearances, for 7 days, which days(?)') 
 
 # %%
-driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
-WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
+# driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
+# WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
 
 
 # search period parsing
@@ -86,6 +86,7 @@ except:
     print('-----------------\n')
 
 pattern = re.compile(r'\b\b\d{1,2}.\d{1,2}%')
+pattern2 = re.compile(r'\b\b\d{1,2}%')
 companies_list = []
 job_titles_list = []
 
@@ -93,7 +94,7 @@ try:
     WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
     score = driver.find_elements(By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')
     for i in score:
-        if pattern.findall(i.text):
+        if pattern.findall(i.text) or pattern2.findall(i.text):
             job_titles_list.append(i.text)
         else:
             companies_list.append(i.text)
