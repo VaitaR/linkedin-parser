@@ -57,8 +57,8 @@ searchs = score[2].text.split(' ')[0]
 print(searchs, 'search appearances, for 7 days, which days(?)') 
 
 # %%
-# driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
-# WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
+driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
+WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
 
 
 # search period parsing
