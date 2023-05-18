@@ -32,6 +32,7 @@ start_time = datetime.now()
 print('Start time: ', start_time)
 
 # %%
+# driver = uc.Chrome(use_subprocess=True)#, headless = True)
 driver = uc.Chrome(use_subprocess=True, headless = True)
 # detection test
 # driver.get('https://nowsecure.nl')
@@ -39,7 +40,9 @@ driver.get(url = 'https://www.linkedin.com/login')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.ID, "username")))
 driver.find_element(By.ID, "username").send_keys(my_email)
 driver.find_element(By.ID, "password").send_keys(my_password)
+print('login and pass placed')
 driver.find_element(By.CLASS_NAME, "login__form_action_container ").click()
+print('login ready')
 # work long time
 
 
@@ -55,7 +58,7 @@ try:
     impressions = score[0].text.split('\n')[0]
     print(impressions, 'post impressions past 7 days(?)')
 
-    followers = score[1].text.split('\n')[0]
+    followers = score[1].text.split('\n')[0].replace(",", "")
     print(followers, 'total followers') 
 
     views = score[2].text.split('\n')[0] 
