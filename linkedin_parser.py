@@ -44,17 +44,34 @@ driver.find_element(By.CLASS_NAME, "login__form_action_container ").click()
 
 
 # %%
-driver.get(url = f'https://www.linkedin.com/in/{linkedin_link}/')
-WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'pvs-list__item--three-column')))
+# open link
+try:
+    driver.get(url = f'https://www.linkedin.com/dashboard/')
+    WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'pcd-analytics-view-item')))
 
-# profile page base numbers
-score = driver.find_elements(By.CLASS_NAME, 'pvs-list__item--three-column')
-views = score[0].text.split(' ')[0]
-print(views, 'profile views, in 90 days') 
-impressions = score[1].text.split(' ')[0]
-print(impressions, 'post impressions, all time(?)')
-searchs = score[2].text.split(' ')[0] 
-print(searchs, 'search appearances, for 7 days, which days(?)') 
+    # profile page base numbers
+    score = driver.find_elements(By.CLASS_NAME, 'pcd-analytics-view-item')
+
+    impressions = score[0].text.split('\n')[0]
+    print(impressions, 'post impressions past 7 days(?)')
+
+    followers = score[1].text.split('\n')[0]
+    print(followers, 'total followers') 
+
+    views = score[2].text.split('\n')[0] 
+    print(views, 'profiles viewers past 90 days')
+
+    searchs = score[3].text.split('\n')[0] 
+    print(searchs, 'search appearances previous week') 
+except:
+    print('analytics page have problems')
+
+
+
+
+
+# %%
+score[2].text.split('\n')[0]
 
 # %%
 driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
@@ -154,7 +171,7 @@ print(script_time)
 print('script execution time ',datetime.now() - start_time)
 
 # %%
-List = [script_time, views, impressions, searchs, index, brand, find_people, engage, relationships, people_industry, people_network, industry_ssi_rank, network_ssi_rank, keywords,companies_list, job_titles_list, dt1, dt2]
+List = [script_time, views, impressions, searchs, index, brand, find_people, engage, relationships, people_industry, people_network, industry_ssi_rank, network_ssi_rank, keywords,companies_list, job_titles_list, dt1, dt2, followers]
 
 # %%
 with open('linkedin_parsing_results.csv', 'a') as f_object:
@@ -167,8 +184,8 @@ with open('linkedin_parsing_results.csv', 'a') as f_object:
 driver.quit()
 
 # %%
-df = pd.read_csv('linkedin_parsing_results.csv')
-df.tail()
+# df = pd.read_csv('linkedin_parsing_results.csv')
+# df.tail()
 
 
 # %%
