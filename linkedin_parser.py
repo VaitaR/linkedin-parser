@@ -1,18 +1,14 @@
 # %%
 # from selenium_stealth import stealth
 import time
-import undetected_chromedriver as uc
-import requests
-
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.chrome.options import Options
+from seleniumbase import Driver
 from bs4 import BeautifulSoup
 
 from csv import writer
-import pandas as pd
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import re
@@ -32,15 +28,18 @@ start_time = datetime.now()
 print('Start time: ', start_time)
 
 # %%
-# driver = uc.Chrome(use_subprocess=True)#, headless = True)
-driver = uc.Chrome(use_subprocess=True, headless = True)
+# driver = uc.Chrome(use_subprocess=True), headless = True)
+# driver = uc.Chrome(use_subprocess=True)
+driver = Driver(uc=True)
 # detection test
 # driver.get('https://nowsecure.nl')
 driver.get(url = 'https://www.linkedin.com/login')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.ID, "username")))
 driver.find_element(By.ID, "username").send_keys(my_email)
+time.sleep(1)
 driver.find_element(By.ID, "password").send_keys(my_password)
 print('login and pass placed')
+time.sleep(1)
 driver.find_element(By.CLASS_NAME, "login__form_action_container ").click()
 print('login ready')
 # work long time
@@ -70,22 +69,16 @@ except:
     print('analytics page have problems')
 
 
-
-
-
-# %%
-score[2].text.split('\n')[0]
-
 # %%
 driver.get(url = 'https://www.linkedin.com/analytics/search-appearances/')
 WebDriverWait(driver, 30).until(ec.presence_of_element_located((By.CLASS_NAME, 'member-analytics-addon-bar-chart__row')))
-
+time.sleep(1)
 
 # search period parsing
 try:
     search_period = driver.find_element(By.CLASS_NAME, 'member-analytics-addon-analytics-view__subtitle').text
     dt1 = parse(search_period.split('between ')[1].split(' - ')[0])
-    dt2 = parse(search_period.split('between ')[1].split(' - ')[1])
+    dt2 = parse(search_period.split('between ')[1].split(' - ')[1].split('.')[0])
     if dt1 > dt2:
         dt1 = dt1 - relativedelta(years = 1)
     print('Search period: ', dt1, ' - ', dt2)
@@ -134,7 +127,7 @@ try:
 except:
     print('element for check was not found')
 
-soup = BeautifulSoup(driver.page_source, 'lxml')
+soup = BeautifulSoup(driver.page_source, 'html')
 intro = soup.find_all('span', {'class': 'ssi-score__value block mb-3 t-black t-light'})
 
 index = intro[0].get_text(strip = True)
@@ -177,7 +170,10 @@ print('script execution time ',datetime.now() - start_time)
 List = [script_time, views, impressions, searchs, index, brand, find_people, engage, relationships, people_industry, people_network, industry_ssi_rank, network_ssi_rank, keywords,companies_list, job_titles_list, dt1, dt2, followers]
 
 # %%
-with open('linkedin_parsing_results.csv', 'a') as f_object:
+print(List)
+
+# %%
+with open('linkedin_parsing_results.csv', 'a', encoding='utf-8') as f_object:
  
     writer_object = writer(f_object)
     writer_object.writerow(List)
@@ -189,6 +185,9 @@ driver.quit()
 # %%
 # df = pd.read_csv('linkedin_parsing_results.csv')
 # df.tail()
+
+
+# %%
 
 
 # %%
