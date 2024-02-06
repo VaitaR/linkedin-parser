@@ -13,6 +13,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import re
 from dateutil.parser import parse
+import os
 
 # %%
 import config
@@ -172,12 +173,17 @@ List = [script_time, views, impressions, searchs, index, brand, find_people, eng
 # %%
 print(List)
 
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_path, 'linkedin_parsing_results.csv')
+
 # %%
-with open('linkedin_parsing_results.csv', 'a', encoding='utf-8') as f_object:
+with open(file_path, 'a', encoding='utf-8') as f_object:
  
     writer_object = writer(f_object)
     writer_object.writerow(List)
     f_object.close()
+    print('file updated in ', file_path)
 
 # %%
 driver.quit()
